@@ -9,7 +9,7 @@ import os
 
 from user_inputs import user_inputs_video
 
-client = OpenAI(api_key=("your api key here"))
+client = OpenAI(api_key=("your-api-key-here"))
 
 PROMPT_COACH_ID = "pmpt_690082b679e88190a4179d222a82a9cd05af044856ee1990"
 
@@ -45,6 +45,7 @@ def process_prompts(inputs):
     results1 = []
     results2 = []
     results3 = []
+    results4 = []
 
     keyword_variables_list = []  # ✅ For Response API keyword variable list
 
@@ -63,7 +64,8 @@ def process_prompts(inputs):
                     "input": input_text,                    
                 }
             },
-            input=""
+            input="",
+            service_tier="priority"
         )
 
         log("[PROMPT COACH] Keyword Generation Success")
@@ -78,6 +80,12 @@ def process_prompts(inputs):
             "keyword": randomized_json
         })
 
+        results1.append({
+            "input": input_text,
+            "original_keywords": json.dumps(output_json, ensure_ascii=False),
+            "randomized_keywords": json.dumps(randomized_json, ensure_ascii=False)
+        })
+
         # ✅ CSV Formatting
         row = {"input": input_text}
         for idx, (key, value) in enumerate(randomized_json.items(), 1):
@@ -87,7 +95,7 @@ def process_prompts(inputs):
             else:
                 val_str = str(value)
             row[col_name] = f"{key}: [{val_str}]"
-        results1.append(row)
+        results2.append(row)
 
         keyword_value = json.dumps(keyword_variables_list, ensure_ascii=False, indent=2)
 
@@ -103,7 +111,8 @@ def process_prompts(inputs):
                     "keyword": keyword_value,                   
                 }
             },
-            input=input_text
+            input=input_text,
+            service_tier="priority"
         )
         log("[FAST] Optimization Success")
         print(response2.output_text)
@@ -111,8 +120,8 @@ def process_prompts(inputs):
         
         row = {"input": input_text}
 
-        results2.append(row)
-        results2.append(output_json)
+        results3.append(row)
+        results3.append(output_json)
 
         response3 = client.responses.create(
             prompt={
@@ -122,7 +131,8 @@ def process_prompts(inputs):
                     "keyword": keyword_value,                   
                 }
             },
-            input=input_text
+            input=input_text,
+            service_tier="priority"
         )
         log("[SMART] Optimization Success")
         print(response3.output_text)
@@ -130,17 +140,18 @@ def process_prompts(inputs):
         
         row = {"input": input_text}
 
-        results3.append(row)
-        results3.append(output_json)
+        results4.append(row)
+        results4.append(output_json)
         
 
 
     # ✅ Save to CSV
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    output_path1 = f"prompt_coach_result/pc_{timestamp}.csv"
-    output_path2 = f"fast_result/pc_{timestamp}.csv"
-    output_path3 = f"smart_result/pc_{timestamp}.csv"
+    output_path1 = f"prompt_coach_result/video_pc_{timestamp}.csv"
+    output_path2 = f"random_selection/video_rs_{timestamp}.csv"
+    output_path3 = f"fast_result/video_fast_{timestamp}.csv"
+    output_path4 = f"smart_result/video_smart_{timestamp}.csv"
 
     df1 = pd.DataFrame(results1)
     df1.to_csv(output_path1, index=False, encoding="utf-8-sig")
@@ -148,11 +159,17 @@ def process_prompts(inputs):
 
     df2 = pd.DataFrame(results2)
     df2.to_csv(output_path2, index=False, encoding="utf-8-sig")
-    print(f"📂 [FAST] completed! Result saved at '{output_path2}'")
+    print(f"📂 [Random Selection] completed! Result saved at '{output_path2}'")
 
     df3 = pd.DataFrame(results3)
     df3.to_csv(output_path3, index=False, encoding="utf-8-sig")
-    print(f"📂 [SMART] completed! Result saved at '{output_path3}'")
+    print(f"📂 [FAST] completed! Result saved at '{output_path3}'")
+
+    df4 = pd.DataFrame(results4)
+    df4.to_csv(output_path4, index=False, encoding="utf-8-sig")
+    print(f"📂 [SMART] completed! Result saved at '{output_path4}'")
+
+
 
     # ✅ Return JSON
     return json.dumps(keyword_variables_list, ensure_ascii=False, indent=2)
