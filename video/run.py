@@ -9,7 +9,7 @@ import os
 
 from user_inputs import user_inputs_video
 
-client = OpenAI(api_key=("REMOVED"))
+client = OpenAI(api_key=("your_api_key_here"))
 
 PROMPT_COACH_ID = "pmpt_690082b679e88190a4179d222a82a9cd05af044856ee1990"
 PROMPT_FAST_ID = "pmpt_69008264ea98819397eba349667cdbb60d15d9b98435443e"

@@ -9,7 +9,7 @@ import os
 
 from user_inputs import user_inputs_text
 
-client = OpenAI(api_key=("REMOVED"))
+client = OpenAI(api_key=("your_api_key_here"))
 
 PROMPT_COACH_ID = "pmpt_6900847673688195be5e271c67dec86305916e175b396892"
 PROMPT_FAST_ID = "pmpt_690083ffc2088190a8f29870d017d4100afefbc8dfdc5b7f"
