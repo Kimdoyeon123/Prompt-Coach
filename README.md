@@ -1,8 +1,13 @@
 # Prompt-Coach
 ***
 
-## Install Environment
-**Python Version = 3.10**   
+## Install Environment   
+<pre>
+  <code>
+    conda create -n promptcoach python=3.10 -y
+    conda activate promptcoach 
+  </code>
+</pre>
 
 <pre>
   <code>
